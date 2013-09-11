@@ -320,10 +320,11 @@ class TermsFilter(Filter):
 
     _internal_name = "terms"
 
-    def __init__(self, field=None, values=None, execution=None, **kwargs):
+    def __init__(self, field=None, values=None, execution=None, _cache_key=None, **kwargs):
         super(TermsFilter, self).__init__(**kwargs)
         self._values = {}
         self.execution = execution
+        self._cache_key = _cache_key
         if field is not None and values is not None:
             self.add(field, values)
 
@@ -334,6 +335,8 @@ class TermsFilter(Filter):
         if not self._values:
             raise RuntimeError("A least a field/value pair must be added")
         data = self._values.copy()
+        if self._cache_key:
+            data['_cache_key'] = self._cache_key
         if self.execution:
             data["execution"] = self.execution
         return data
